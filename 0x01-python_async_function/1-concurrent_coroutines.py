@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Returns a list of delays in ascending order."""
+"""Returns a list of delays in ascending order"""
 
 import asyncio
 from typing import List
