@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 
 import unittest
-from utils import access_nested_map
+from utils import access_nested_map, get_json
 from parameterized import parameterized
+from unittest.mock import Mock, patch
 
 
 class TestAccessNestedMap(unittest.TestCase):
+    """
+    Test case class for the 'access_nested_map' function.
+
+    This class contains test methods to validate the behavior of the
+    'access_nested_map' function when accessing nested paths within
+    dictionaries. It includes tests for both successful path access and
+    the handling of exceptions for invalid paths.
+    """
+
     @parameterized.expand(
         [
             ({"a": 1}, ("a",), 1),
@@ -32,8 +42,8 @@ class TestAccessNestedMap(unittest.TestCase):
             AssertionError: If the actual output does not
             match the expected output.
         """
-        real_output = access_nested_map(map, path)
-        self.assertEqual(real_output, expected_output)
+        output = access_nested_map(map, path)
+        self.assertEqual(output, expected_output)
 
     @parameterized.expand([({}, ("a",), "a"), ({"a": 1}, ("a", "b"), "b")])
     def test_access_nested_map_exception(self, map, path, wrong_output):
@@ -56,3 +66,45 @@ class TestAccessNestedMap(unittest.TestCase):
         with self.assertRaises(KeyError) as e:
             access_nested_map(map, path)
             self.assertEqual(wrong_output, str(e.exception))
+
+
+class TestGetJson(unittest.TestCase):
+    """
+    Test case class for the 'get_json' function.
+
+    This class includes test methods to validate the behavior of the
+    'get_json' function, which is responsible for retrieving JSON from
+    specified URLs. The tests cover different scenarios, ensuring the function
+    correctly handles various input cases.
+    """
+
+    @parameterized.expand(
+        [
+            ("http://example.com", {"payload": True}),
+            ("http://holberton.io", {"payload": False}),
+        ]
+    )
+    def test_get_json(self, test_url, test_payload):
+        """
+        Test the 'get_json' method.
+
+        Args:
+            test_url (str): The URL for testing.
+            test_payload (dict): The expected JSON payload.
+
+        Returns:
+            None: Asserts the equality of the actual and expected outputs.
+
+        Raises:
+            AssertionError: If the actual output does not
+            match the expected output.
+        """
+        # Create a Mock with json method returning test_payload
+        mock_response = Mock()
+        mock_response.json.return_value = test_payload
+
+        # Patch 'requests.get' to return the mock_response
+        with patch("requests.get", return_value=mock_response):
+            response = get_json(test_url)
+            self.assertEqual(response, test_payload)
+            mock_response.json.assert_called_once()
