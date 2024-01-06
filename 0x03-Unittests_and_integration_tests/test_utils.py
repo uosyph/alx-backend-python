@@ -1,7 +1,33 @@
 #!/usr/bin/env python3
+"""
+Module: test_utils.py
+
+This module contains unit tests for the utility functions provided in the
+'utils' module. The utility functions include 'access_nested_map', 'get_json',
+and the 'memoize' decorator.
+
+The test cases cover various scenarios for each utility function to ensure
+their correct behavior.
+
+Tested Functions:
+1. access_nested_map: Function for accessing nested paths within dictionaries.
+2. get_json: Function for retrieving JSON from specified URLs.
+3. memoize: Decorator for memoizing the result of a method to
+optimize performance.
+
+Test Classes:
+1. 'TestAccessNestedMap': Test case class for 'access_nested_map' function.
+   - Tests successful path access and exception handling for invalid paths.
+
+2. 'TestGetJson': Test case class for 'get_json' function.
+   - Tests the retrieval of JSON from different URLs.
+
+3. 'TestMemoize': Test case class for 'memoize' decorator.
+   - Tests the memoization of a method within a class.
+"""
 
 import unittest
-from utils import access_nested_map, get_json
+from utils import access_nested_map, get_json, memoize
 from parameterized import parameterized
 from unittest.mock import Mock, patch
 
@@ -108,3 +134,44 @@ class TestGetJson(unittest.TestCase):
             response = get_json(test_url)
             self.assertEqual(response, test_payload)
             mock_response.json.assert_called_once()
+
+
+class TestMemoize(unittest.TestCase):
+    """
+    Test case class for the 'memoize' decorator.
+
+    This class contains a test method to validate the behavior of the 'memoize'
+    decorator when applied to a method within a class. It ensures that
+    the decorated method is memoized, meaning subsequent calls return the
+    cached result without re-computation.
+    """
+
+    def test_memoize(self):
+        """
+        Test the 'memoize' decorator functionality.
+
+        This test method creates a test class with a memoized property and
+        verifies that the underlying method is called only once, even when
+        the property is accessed multiple times.
+
+        Returns:
+            None: Asserts the behavior of the 'memoize' decorator.
+
+        Raises:
+            AssertionError: If the expected behavior is not
+            observed during testing.
+        """
+
+        class TestClass:
+            def a_method(self):
+                return 42
+
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
+        with patch.object(TestClass, "a_method", return_value=42) as mocked:
+            spec = TestClass()
+            spec.a_property
+            spec.a_property
+            mocked.asset_called_once()
