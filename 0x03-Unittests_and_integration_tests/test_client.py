@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
 
 import unittest
-import json
 from parameterized import parameterized, parameterized_class
-from unittest import mock
-from unittest.mock import patch, Mock, PropertyMock
+from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient
 from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Unit tests for the GithubOrgClient class."""
+    """
+    Unit tests for the GithubOrgClient class.
+
+    This class contains unit tests for the methods
+    `of the GithubOrgClient class.
+    The test cases cover various scenarios to ensure the correct behavior of
+    the 'org', '_public_repos_url', 'public_repos', and 'has_license' methods.
+    """
 
     @parameterized.expand([("google"), ("abc")])
     @patch("client.get_json")
@@ -24,6 +29,10 @@ class TestGithubOrgClient(unittest.TestCase):
 
         Returns:
             None
+
+        Raises:
+            AssertionError: If the actual output does not
+            match the expected output.
         """
         endpoint = f"https://api.github.com/orgs/{org_name}"
         github_client = GithubOrgClient(org_name)
@@ -43,6 +52,10 @@ class TestGithubOrgClient(unittest.TestCase):
 
         Returns:
             None
+
+        Raises:
+            AssertionError: If the actual output does not
+            match the expected output.
         """
         with patch("client.GithubOrgClient.org",
                    PropertyMock(return_value=result)):
@@ -59,6 +72,10 @@ class TestGithubOrgClient(unittest.TestCase):
 
         Returns:
             None
+
+        Raises:
+            AssertionError: If the actual output does not
+            match the expected output.
         """
         repos_payload = [{"name": "Google"}, {"name": "Twitter"}]
         mock_get_json.return_value = repos_payload
@@ -94,6 +111,10 @@ class TestGithubOrgClient(unittest.TestCase):
 
         Returns:
             None
+
+        Raises:
+            AssertionError: If the actual output does not
+            match the expected output.
         """
         result = GithubOrgClient.has_license(repo_info, license_key)
         self.assertEqual(result, expectation)
@@ -106,6 +127,11 @@ class TestGithubOrgClient(unittest.TestCase):
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """
     Integration tests for the GithubOrgClient class using parameterized class.
+
+    This class contains integration tests for the GithubOrgClient class.
+    The test cases cover the 'public_repos' method with different payloads.
+    It validates the behavior of the 'public_repos' method in combination with
+    mocked responses for organization and repositories.
 
     Attributes:
         org_payload (dict): Mocked organization payload.
