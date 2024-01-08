@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
 import unittest
-from parameterized import parameterized
-from unittest.mock import patch, PropertyMock
+import json
+from parameterized import parameterized, parameterized_class
+from unittest import mock
+from unittest.mock import patch, Mock, PropertyMock
 from client import GithubOrgClient
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -57,7 +60,7 @@ class TestGithubOrgClient(unittest.TestCase):
         Returns:
             None
         """
-        repos_payload = [{"name": "Google"}, {"name": "TT"}]
+        repos_payload = [{"name": "Google"}, {"name": "Twitter"}]
         mock_get_json.return_value = repos_payload
 
         with patch(
@@ -65,10 +68,12 @@ class TestGithubOrgClient(unittest.TestCase):
             new_callable=PropertyMock
         ) as mock_public_repos_url:
             # Set up mock data for the '_public_repos_url' property
-            mock_public_repos_url.return_value = "world"
-            response = GithubOrgClient("test").public_repos()
+            mock_public_repos_url.return_value = "hello, world"
 
-            self.assertEqual(response, ["Google", "TT"])
+            response = GithubOrgClient("test").public_repos()
+            expected_response = [repo["name"] for repo in repos_payload]
+            self.assertEqual(response, expected_response)
+
             mock_public_repos_url.assert_called_once()
             mock_get_json.assert_called_once()
 
