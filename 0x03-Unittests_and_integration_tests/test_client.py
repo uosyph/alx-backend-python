@@ -157,13 +157,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher = patch("requests.get", **config)
         cls.mock = cls.get_patcher.start()
 
-    @classmethod
-    def tearDownClass(cls):
-        """
-        Tear down class method to stop the 'requests.get' patch.
-        """
-        cls.get_patcher.stop()
-
     def test_public_repos(self):
         """
         Integration test for fetching public repositories.
@@ -193,3 +186,10 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         self.assertEqual(client.public_repos("apache-2.0"),
                          self.apache2_repos)
         self.mock.assert_called()
+
+    @classmethod
+    def tearDownClass(cls):
+        """
+        Tear down class method to stop the 'requests.get' patch.
+        """
+        cls.get_patcher.stop()
