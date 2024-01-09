@@ -1,4 +1,20 @@
 #!/usr/bin/env python3
+"""
+Module: test_client.py
+
+This module contains unit and integration tests for the 'GithubOrgClient' class
+in the 'client' module. The test cases cover various scenarios to ensure the
+correct behavior of the methods in the 'GithubOrgClient' class.
+
+Test Classes:
+1. 'TestGithubOrgClient': Unit test case class for 'GithubOrgClient'.
+   - Tests cover the 'org', '_public_repos_url',
+   'public_repos', and 'has_license' methods.
+
+2. 'TestIntegrationGithubOrgClient': Integration test case class
+for 'GithubOrgClient'.
+   - Tests cover the 'public_repos' method with different payloads.
+"""
 
 import unittest
 from parameterized import parameterized, parameterized_class
